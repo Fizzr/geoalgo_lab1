@@ -5,6 +5,7 @@
     </head>
 
     <canvas id="myCanvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
+
     <br>
     <button id="random" class="menu">Random</button>
     <button id="compute" class="menu">Compute</button>
@@ -84,8 +85,8 @@
 
         $("#compute").click(function()
         {
-            Andrew();
-        })
+            console.log(Andrew());
+        });
 
         function isRightTurn(a, b, c, goingRight)
         {
@@ -136,11 +137,14 @@
                         while (!onlyOne && !isRightTurn(a, b, pointList[i], right))
                         {
                             hull.pop()
-                            c.beginPath();
-                            c.strokeStyle = "#3dff94";
-                            c.moveTo(a[0], canvas.height - a[1]);
-                            c.lineTo(b[0], canvas.height - b[1]);
-                            c.stroke();
+                            if(!( i == pointList.length && !right))
+                            {
+                                c.beginPath();
+                                c.strokeStyle = "#3dff94";
+                                c.moveTo(a[0], canvas.height - a[1]);
+                                c.lineTo(b[0], canvas.height - b[1]);
+                                c.stroke();
+                            }
                             if (hull.length > 1)
                             {
                                 a = hull[hull.length - 2];
@@ -156,17 +160,12 @@
                     if (hull.length > 1)
                     {
                         onlyOne = false;
-                        if (!(i == pointList.length-1 && !right))
-                        {
-                            c.beginPath();
-                            c.strokeStyle = "#FF0000";
-                            c.moveTo(hull[hull.length - 1][0], canvas.height - hull[hull.length - 1][1]);
-                            c.lineTo(hull[hull.length - 2][0], canvas.height - hull[hull.length - 2][1]);
-                            c.stroke();
-                        }
+                        c.beginPath();
+                        c.strokeStyle = "#FF0000";
+                        c.moveTo(hull[hull.length - 1][0], canvas.height - hull[hull.length - 1][1]);
+                        c.lineTo(hull[hull.length - 2][0], canvas.height - hull[hull.length - 2][1]);
+                        c.stroke();
                     }
-                    console.log(hull);
-
                     i = i + change;
                 }
                 i--;
@@ -174,6 +173,8 @@
                 right = false;
                 hull = lowerHull;
             }
+
+            return upperHull.concat(lowerHull.slice(1, lowerHull.length-1));
         }
     </script>
 </html>
