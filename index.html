@@ -1,0 +1,179 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+
+    <canvas id="myCanvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
+    <br>
+    <button id="random" class="menu">Random</button>
+    <button id="compute" class="menu">Compute</button>
+    <button id="clear" class="menu">Clear</button>
+    <input id="input" type="file" accept=".txt" hidden="hidden">
+    <label for="input" class="menu">Load</label>
+
+    <script>
+        var $canvas = $("#myCanvas");
+        var canvas = $canvas[0];
+        var c = canvas.getContext("2d");
+        var pointList = [];
+        var circleSize = 5;
+        c.fillStyle = "#CA1337"
+
+
+
+        function addPoint (x, y)
+        {
+            var invertedY = canvas.height -y;
+            pointList.push([x,y]);
+            c.strokeStyle = "#000000";
+            c.beginPath();
+            c.arc(x,invertedY, circleSize, 0, 2*Math.PI, false);
+            c.fill();
+            c.stroke();
+        }
+
+        $canvas.click(function(e)
+        {
+            var xCord = e.pageX - canvas.offsetLeft;
+            var yCord = e.pageY - canvas.offsetTop;
+            addPoint(xCord, canvas.height - yCord);
+        });
+
+        $("#clear").click(function()
+        {
+            pointList.length = 0;
+            c.clearRect(0,0, canvas.width, canvas.height);
+        })
+
+        $("#input").change(function()
+        {
+            var file = this.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function(e)
+            {
+                var text = reader.result;
+                var lines = text.split(/[\r\n]+/g);
+
+                for (var i = 0; i < lines.length; i++)
+                {
+                    coords = lines[i].split(" ");
+                    if(coords.length != 2 || isNaN(coords[0]) || isNaN(coords[1]))
+                    {
+                        alert("Error reading file on line "+ i);
+                        return;
+                    }
+                    addPoint(parseInt(coords[0]), parseInt(coords[1]));
+                }
+            }
+            reader.readAsText(file);
+        })
+
+        $("#random").click(function (e)
+        {
+            var num = Math.random()*40+5;
+
+            for(var i = 0; i < num; i++)
+            {
+                var x = Math.floor(Math.random()*canvas.width);
+                var y = Math.floor(Math.random()*canvas.height);
+                addPoint(x,y);
+            }
+        })
+
+        $("#compute").click(function()
+        {
+            Andrew();
+        })
+
+        function isRightTurn(a, b, c, goingRight)
+        {
+            var koef = (a[1] - b[1]) / (a[0] - b[0]);
+            var con = (-a[0] * koef) + a[1];
+
+            if (c[1] < koef * c[0] + con)
+            {
+                if(goingRight)
+                    return true;
+                else
+                    return false;
+            }
+            else
+            {
+                if(goingRight)
+                    return false;
+                else
+                    return true;
+            }
+
+        }
+
+        function Andrew ()
+        {
+            pointList.sort(function (a, b)
+            {
+                return a[0] - b[0];         //Sort by x coordinate (index 0)
+            })
+
+            var upperHull = [];
+            var lowerHull = [];
+            var onlyOne = false;
+            var i = 0;
+            var right = true;
+            var change = 1;
+            var hull = upperHull;
+
+            for (var p = 0; p < 2; p++)
+            {
+                while ((i < pointList.length && right) || (i >= 0 && !right))
+                {
+                    if (hull.length >= 2)
+                    {
+                        var a = hull[hull.length - 2];
+                        var b = hull[hull.length - 1];
+
+                        while (!onlyOne && !isRightTurn(a, b, pointList[i], right))
+                        {
+                            hull.pop()
+                            c.beginPath();
+                            c.strokeStyle = "#3dff94";
+                            c.moveTo(a[0], canvas.height - a[1]);
+                            c.lineTo(b[0], canvas.height - b[1]);
+                            c.stroke();
+                            if (hull.length > 1)
+                            {
+                                a = hull[hull.length - 2];
+                                b = hull[hull.length - 1];
+                            }
+                            else
+                            {
+                                onlyOne = true;
+                            }
+                        }
+                    }
+                    hull.push(pointList[i])
+                    if (hull.length > 1)
+                    {
+                        onlyOne = false;
+                        if (!(i == pointList.length-1 && !right))
+                        {
+                            c.beginPath();
+                            c.strokeStyle = "#FF0000";
+                            c.moveTo(hull[hull.length - 1][0], canvas.height - hull[hull.length - 1][1]);
+                            c.lineTo(hull[hull.length - 2][0], canvas.height - hull[hull.length - 2][1]);
+                            c.stroke();
+                        }
+                    }
+                    console.log(hull);
+
+                    i = i + change;
+                }
+                i--;
+                change = -1;
+                right = false;
+                hull = lowerHull;
+            }
+        }
+    </script>
+</html>
