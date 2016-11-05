@@ -12,6 +12,7 @@
     <button id="clear" class="menu">Clear</button>
     <input id="input" type="file" accept=".txt" hidden="hidden">
     <label for="input" class="menu">Load</label>
+    <button id="coords" class="menu">Coords</button>
 
     <script>
         var $canvas = $("#myCanvas");
@@ -45,7 +46,16 @@
         {
             pointList.length = 0;
             c.clearRect(0,0, canvas.width, canvas.height);
-        })
+        });
+
+        $("#coords").click(function()
+        {
+            for(var i = 0; i < pointList.length; i++)
+            {
+                c.strokeStyle = "#000000";
+                c.strokeText(pointList[i][0] + " : " + pointList[i][1], pointList[i][0], canvas.height - pointList[i][1] - 20);
+            }
+        });
 
         $("#input").change(function()
         {
@@ -67,9 +77,9 @@
                     }
                     addPoint(parseInt(coords[0]), parseInt(coords[1]));
                 }
-            }
+            };
             reader.readAsText(file);
-        })
+        });
 
         $("#random").click(function (e)
         {
@@ -85,7 +95,12 @@
 
         $("#compute").click(function()
         {
-            console.log(Andrew());
+            var res = Andrew();
+            console.log("Result:");
+            for (var i = 0; i < res.length; i++)
+            {
+                console.log(res[i][0] + " : " + res[i][1]);
+            }
         });
 
         function isRightTurn(a, b, c, goingRight)
@@ -137,7 +152,7 @@
                         while (!onlyOne && !isRightTurn(a, b, pointList[i], right))
                         {
                             hull.pop()
-                            if(!( i == pointList.length && !right))
+                            if(!(!right && b == upperHull[upperHull.length-2] && i == pointList.length-3))
                             {
                                 c.beginPath();
                                 c.strokeStyle = "#3dff94";
