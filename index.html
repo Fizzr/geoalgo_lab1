@@ -13,7 +13,26 @@
     <input id="input" type="file" accept=".txt" hidden="hidden">
     <label for="input" class="menu">Load</label>
     <button id="coords" class="menu">Coords</button>
-
+    <div>
+        <div style="float:left">
+            <br>
+            A:
+            x<input  id ="ax" type="number" class="coord">
+            y<input  id ="ay" type="number" class="coord">
+            <br>
+            B:
+            x<input  id ="bx" type="number" class="coord">
+            y<input  id ="by" type="number" class="coord">
+            <br>
+            C:
+            x<input  id ="cx" type="number" class="coord">
+            y<input  id ="cy" type="number" class="coord">
+            <br>
+            Upper hull <input id = "turnType" type="checkbox">
+        </div>
+        <button id="turn" class="menu" style="float:left; margin-top: 40px; margin-left: 10px">Test Turn</button>
+        <div id="turnRes" style="float:left; margin-top: 40px; margin-left: 10px"> </div>
+    </div>
     <script>
         var $canvas = $("#myCanvas");
         var canvas = $canvas[0];
@@ -48,6 +67,35 @@
             c.clearRect(0,0, canvas.width, canvas.height);
         });
 
+        $("#turn").click(function()
+        {
+            var ax = $("#ax").val();
+            var ay = $("#ay").val();
+            var bx = $("#bx").val();
+            var by = $("#by").val();
+            var cx = $("#cx").val();
+            var cy = $("#cy").val();
+            var check = $("#turnType")[0].checked;
+
+            if (!(ax == "" || ay == "" || bx == "" || by == "" || cx == "" || cy == ""))
+            {
+                var a = [ax, ay];
+                var b =[bx, by];
+                var c = [cx, cy];
+                var koef = (a[1] - b[1]) / (a[0] - b[0]);
+                var con = (-a[0] * koef) + a[1];
+                var resY = cx * koef + con;
+
+                console.log( cy + " vs " + resY);
+
+                $("#turnRes").text(isRightTurn([ax, ay], [bx, by], [cx, cy], check));
+            }
+            else
+            {
+                $("#turnRes").text("Missing Coordinates")
+            }
+        });
+
         $("#coords").click(function()
         {
             for(var i = 0; i < pointList.length; i++)
@@ -60,6 +108,7 @@
         $("#input").change(function()
         {
             var file = this.files[0];
+            $(this).val("");
             var reader = new FileReader();
 
             reader.onload = function(e)
@@ -105,6 +154,10 @@
 
         function isRightTurn(a, b, c, goingRight)
         {
+            if(a[0] == b[0])
+            {
+                a[0] += 0.0000000000000001;
+            }
             var koef = (a[1] - b[1]) / (a[0] - b[0]);
             var con = (-a[0] * koef) + a[1];
 

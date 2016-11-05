@@ -5,4 +5,16 @@
     padding-right: 2px;
     border: solid;
     border-width: 1px;
+    margin-bottom: 3px;
+    margin-top: 3px
+}
+.coord
+{
+    width: 40px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
