@@ -13,6 +13,7 @@
     <input id="input" type="file" accept=".txt" hidden="hidden">
     <label for="input" class="menu">Load</label>
     <button id="coords" class="menu">Coords</button>
+    <button id="unclutter" class="menu">Unclutter</button>
     <div>
         <div style="float:left">
             <br>
@@ -39,6 +40,9 @@
         var c = canvas.getContext("2d");
         var pointList = [];
         var circleSize = 5;
+        var restorePoint;
+        var cluttered = false;
+
         c.fillStyle = "#CA1337"
 
 
@@ -56,6 +60,11 @@
 
         $canvas.click(function(e)
         {
+            if(cluttered)
+            {
+                c.putImageData(restorePoint, 0, 0);
+                cluttered = false;
+            }
             var xCord = e.pageX - canvas.offsetLeft;
             var yCord = e.pageY - canvas.offsetTop;
             addPoint(xCord, canvas.height - yCord);
@@ -63,6 +72,7 @@
 
         $("#clear").click(function()
         {
+            cluttered = false;
             pointList.length = 0;
             c.clearRect(0,0, canvas.width, canvas.height);
         });
@@ -82,8 +92,6 @@
                 var a = [ax, ay];
                 var b =[bx, by];
                 var c = [cx, cy];
-                if(a[0] == b[0])
-                    a[0] = a[0] + 0.000001;
                 var koef = (a[1] - b[1]) / (a[0] - b[0]);
                 var con = (-a[0] * koef) + a[1];
                 var resY = cx * koef + con;
@@ -100,6 +108,9 @@
 
         $("#coords").click(function()
         {
+            if(!cluttered)
+                restorePoint = c.getImageData(0,0, canvas.width, canvas.height);
+            cluttered = true;
             for(var i = 0; i < pointList.length; i++)
             {
                 c.strokeStyle = "#000000";
@@ -107,8 +118,22 @@
             }
         });
 
+        $("#unclutter").click(function()
+        {
+            if(cluttered)
+            {
+                c.putImageData(restorePoint, 0, 0);
+                cluttered = false;
+            }
+        });
+
         $("#input").change(function()
         {
+            if(cluttered)
+            {
+                c.putImageData(restorePoint, 0, 0);
+                cluttered = false;
+            }
             var file = this.files[0];
             $(this).val("");
             var reader = new FileReader();
@@ -134,6 +159,11 @@
 
         $("#random").click(function (e)
         {
+            if(cluttered)
+            {
+                c.putImageData(restorePoint, 0, 0);
+                cluttered = false;
+            }
             var num = Math.random()*40+5;
 
             for(var i = 0; i < num; i++)
@@ -146,6 +176,9 @@
 
         $("#compute").click(function()
         {
+            if(!cluttered)
+                restorePoint = c.getImageData(0,0, canvas.width, canvas.height);
+            cluttered = true;
             var res = Andrew();
             console.log("Result:");
             for (var i = 0; i < res.length; i++)
@@ -156,10 +189,6 @@
 
         function isRightTurn(a, b, c, goingRight)
         {
-            if(a[0] == b[0])
-            {
-                //a[0] += 0.000001;
-            }
             var koef = (a[1] - b[1]) / (a[0] - b[0]);
             var con = (-a[0] * koef) + a[1];
 
@@ -177,7 +206,6 @@
                 else
                     return true;
             }
-
         }
 
         function Andrew ()
