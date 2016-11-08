@@ -335,16 +335,18 @@
                 {
                     var startInwards = !isRightTurn(deque.get(1), deque.get(0), pointList[i]);
                     var endInwards = isRightTurn(deque.get(deque.length - 2), deque.get(deque.length - 1), pointList[i]);
-                    if (!startInwards)
+                    var relevant = !(endInwards && startInwards);
+                    while (!startInwards)
                     {
                         deque.shift();
+                        startInwards = !isRightTurn(deque.get(1), deque.get(0), pointList[i]);
                     }
-                    if (!endInwards)
+                    while (!endInwards)
                     {
-                        console.log("pop " + deque.peekBack()[0] + " : " + deque.peekBack()[1]);
                         deque.pop();
+                        endInwards = isRightTurn(deque.get(deque.length - 2), deque.get(deque.length - 1), pointList[i]);
                     }
-                    if (!(endInwards && startInwards))
+                    if (relevant)
                     {
                         deque.unshift(pointList[i]);
                         deque.push(pointList[i]);
