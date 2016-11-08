@@ -227,25 +227,61 @@
 
         function isRightTurn(a, b, c)  // y = kx * c
         {
-            var goingRight = a[0] < b[0];
-            var koef = (a[1] - b[1]) / (a[0] - b[0]);
-            var con = (-a[0] * koef) + a[1];
-
-            if (c[1] < koef * c[0] + con)
-            {
-                if(goingRight)
-                    return true;
-                else
-                    return false;
-            }
-            else
-            {
-                if(goingRight)
-                    return false;
-                else
-                    return true;
-            }
-        }
+			if(a[0] == b[0])
+			{
+				var downToUp = a[1] < b[1];
+				if (c[0] > a[0])
+				{
+					if(downToUp)
+						return true;
+					else
+						return false;
+				}
+				else
+				{
+					if(downToUp)
+						return false;
+					else
+						return true;
+				}
+			}
+			else
+			{
+				var goingRight = a[0] < b[0];
+				var koef = (a[1] - b[1]) / (a[0] - b[0]);
+				var con = (-a[0] * koef) + a[1];
+				
+				if(goingRight)
+				{
+					if(c[1] < koef * c[0] + con)
+						return true;
+					else
+						return false;
+				}
+				else
+				{
+					if(c[1] > koef * c[0] + con)
+						return true;
+					else
+						return false;
+				}
+				
+				/*if (c[1] < koef * c[0] + con)		//Byt lite runt här så punkter inte kan ligga samma (flytta if satsen av goingRight till innan beräkningen)
+				{
+					if(goingRight)
+						return true;
+					else
+						return false;
+				}
+				else
+				{
+					if(goingRight)
+						return false;
+					else
+						return true;
+				}*/
+			}
+		}
 
         function Andrew ()
         {
