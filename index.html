@@ -218,7 +218,7 @@
             {
                 res = Andrew();
             }
-            console.log("Result:");
+            console.log("Result: " + res.length);
             for (var i = 0; i < res.length; i++)
             {
                 console.log(res[i][0] + " " + res[i][1]);
@@ -227,6 +227,8 @@
 
         function isRightTurn(a, b, c)  // y = kx * c
         {
+            if((b[0] == c[0] && b[1] == c[1]) || (a[0] == b[0] && a[1] == b[1]))
+                return false;
 			if(a[0] == b[0])
 			{
 				var downToUp = a[1] < b[1];
@@ -266,7 +268,7 @@
 						return false;
 				}
 				
-				/*if (c[1] < koef * c[0] + con)		//Byt lite runt här så punkter inte kan ligga samma (flytta if satsen av goingRight till innan beräkningen)
+				/*if (c[1] < koef * c[0] + con)		//Byt lite runt hï¿½r sï¿½ punkter inte kan ligga samma (flytta if satsen av goingRight till innan berï¿½kningen)
 				{
 					if(goingRight)
 						return true;
@@ -312,14 +314,12 @@
                         while (!onlyOne && !isRightTurn(a, b, pointList[i]))
                         {
                             hull.pop()
-                            if(!(!right && b == upperHull[upperHull.length-2] && i == pointList.length-3))
-                            {
-                                c.beginPath();
-                                c.strokeStyle = "#3dff94";
-                                c.moveTo(a[0], canvas.height - a[1]);
-                                c.lineTo(b[0], canvas.height - b[1]);
-                                c.stroke();
-                            }
+                            c.beginPath();
+                            c.strokeStyle = "#31d87c";
+                            c.moveTo(a[0], canvas.height - a[1]);
+                            c.lineTo(b[0], canvas.height - b[1]);
+                            c.stroke();
+
                             if (hull.length > 1)
                             {
                                 a = hull[hull.length - 2];
@@ -331,15 +331,22 @@
                             }
                         }
                     }
-                    hull.push(pointList[i])
+                    if (hull.length == 1)
+                    {
+                        if(!(hull[0][0] == pointList[i][0] && hull[0][1] == pointList[i][1]))
+                            hull.push(pointList[i]);
+                    }
+                    else
+                        hull.push(pointList[i]);
+
                     if (hull.length > 1)
                     {
                         onlyOne = false;
-                        c.beginPath();
+                        /*c.beginPath();
                         c.strokeStyle = "#FF0000";
                         c.moveTo(hull[hull.length - 1][0], canvas.height - hull[hull.length - 1][1]);
                         c.lineTo(hull[hull.length - 2][0], canvas.height - hull[hull.length - 2][1]);
-                        c.stroke();
+                        c.stroke();*/
                     }
                     i = i + change;
                 }
@@ -349,7 +356,23 @@
                 hull = lowerHull;
             }
 
-            return upperHull.concat(lowerHull.slice(1, lowerHull.length-1));
+            var res = upperHull.concat(lowerHull.slice(1, lowerHull.length-1));
+            if(res.length >1)
+            {
+                for (var j = 1; j < res.length; j++)
+                {
+                    c.beginPath();
+                    c.strokeStyle = "#FF0000";
+                    c.moveTo(res[j-1][0], canvas.height - res[j-1][1]);
+                    c.lineTo(res[j][0], canvas.height - res[j][1]);
+                    c.stroke();
+                }
+                c.beginPath();
+                c.moveTo(res[res.length-1][0], canvas.height - res[res.length-1][1]);
+                c.lineTo(res[0][0], canvas.height - res[0][1]);
+                c.stroke();
+            }
+            return res;
         }
 
         function Melkman()
