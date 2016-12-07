@@ -46,6 +46,8 @@
         var restorePoint;
         var cluttered = false;
         var meklman = false;
+		const X = 0;
+		const Y = 1;
 
         c.fillStyle = "#CA1337"
 
@@ -202,7 +204,7 @@
                 var y = Math.floor(Math.random()*canvas.height);
                 addPoint(x,y);
             }
-        })
+        });
 
         $("#compute").click(function()
         {
@@ -227,7 +229,12 @@
 
         function isRightTurn(a, b, c)  // y = kx * c
         {
-			if(a[0] == b[0])
+			let v2 = [b[X] - a[X], b[Y] - a[Y]];
+			let v1 = [c[X] - b[X], c[Y] - b[Y]];
+			let cross = v1[X]*v2[Y] - v1[Y]*v2[X];
+			return cross > 0;
+
+		/*	if(a[0] == b[0])
 			{
 				var downToUp = a[1] < b[1];
 				if (c[0] > a[0])
@@ -280,7 +287,7 @@
 					else
 						return true;
 				}*/
-			}
+//			}
 		}
 
         function Andrew ()
