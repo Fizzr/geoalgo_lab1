@@ -2,6 +2,4 @@
 Computational Geometry, D7013E, Lab 1
 
 
-Known bugs:
-
-none
+Page: https://fizzr.github.io/geoalgo_lab1/
